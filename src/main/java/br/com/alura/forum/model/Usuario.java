@@ -1,7 +1,15 @@
 package br.com.alura.forum.model;
 
+import javax.persistence.Id;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue; //chave primária será geradada automaticamente pelo bd
+import javax.persistence.GenerationType;
+
+@Entity
 public class Usuario {
 
+	@Id	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String nome;
 	private String email;

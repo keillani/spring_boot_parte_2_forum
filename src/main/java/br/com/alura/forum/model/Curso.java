@@ -1,15 +1,25 @@
 package br.com.alura.forum.model;
 
+import javax.persistence.Id;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+
+//Para mapear as classes de domínio da aplicação como entidade JPA, devemos utilizar as anotações @Entity, @Id, @GeneratedValue, @ManyToOne, @OneToMany e @Enumerated
+
+@Entity
 public class Curso {
 
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String nome;
 	private String categoria;
 
-	public Curso(String nome, String categoria) {
-		this.nome = nome;
-		this.categoria = categoria;
-	}
+//	public Curso(String nome, String categoria) {
+//		this.nome = nome;
+//		this.categoria = categoria;
+//	}
 	
 	@Override
 	public int hashCode() {
