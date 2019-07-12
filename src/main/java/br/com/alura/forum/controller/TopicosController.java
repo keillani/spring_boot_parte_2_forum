@@ -1,11 +1,12 @@
 package br.com.alura.forum.controller;
 
 import br.com.alura.forum.controller.dto.TopicoDto;
+import br.com.alura.forum.controller.form.TopicoForm;
+import br.com.alura.forum.controller.repository.CursoRepository;
 import br.com.alura.forum.model.Topico;
 import br.com.alura.forum.repository.TopicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -15,12 +16,17 @@ import java.util.List;
 //Para que o Spring Boot popule automaticamente o banco de dados da aplicação, devemos criar o arquivo src/main/resources/data.sql
 
 @RestController
+@RequestMapping("/topicos")
 public class TopicosController {
 
     @Autowired
     private TopicoRepository topicoRepository;
 
-    @RequestMapping("/topicos")
+    @Autowired
+    private CursoRepository cursoRepository;
+
+//    @RequestMapping(value="/topicos", method= RequestMethod.GET)
+    @GetMapping
     public List<TopicoDto> lista(String nomeCurso){
         if(nomeCurso == null){
             List<Topico> topicos = topicoRepository.findAll();
@@ -30,5 +36,13 @@ public class TopicosController {
             return TopicoDto.converter(topicos);
         }
 
+    }
+
+//    @RequestMapping(value="/topicos", method= RequestMethod.POST)
+    @PostMapping
+//    Indicar ao Spring que os parâmetros enviados no corpo da requisição devem ser atribuídos ao parâmetro do método
+    public void cadastrar(@RequestBody TopicoForm form){
+        Topico topico = form.converter(cursoRepository);
+        topicoRepository.save(topico);
     }
 }
