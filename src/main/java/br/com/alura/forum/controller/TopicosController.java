@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -44,11 +45,12 @@ public class TopicosController {
 //    @RequestMapping(value="/topicos", method= RequestMethod.POST)
     @PostMapping
 //    Indicar ao Spring que os parâmetros enviados no corpo da requisição devem ser atribuídos ao parâmetro do método
-//O Spring devolverá o código HTTP 200 (OK), caso a requisição seja processada com sucesso
-    //public void cadastrar(@RequestBody TopicoForm form){
+//    O Spring devolverá o código HTTP 200 (OK), caso a requisição seja processada com sucesso
+//    public void cadastrar(@RequestBody TopicoForm form){
 
 //    para montar uma resposta a ser devolvida ao cliente da API, devemos utilizar a classe ResponseEntity do Spring
-    public ResponseEntity<TopicoDto> cadastrar(@RequestBody TopicoForm form, UriComponentsBuilder uriBuilder){
+//    @Valid: Indicar ao Spring para executar as validações do Bean Validation no parâmetro do método
+    public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder){
         Topico topico = form.converter(cursoRepository);
         topicoRepository.save(topico);
 
