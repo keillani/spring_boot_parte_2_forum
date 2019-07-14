@@ -46,11 +46,13 @@ public class TopicosController {
 //    Indicar ao Spring que os parâmetros enviados no corpo da requisição devem ser atribuídos ao parâmetro do método
 //O Spring devolverá o código HTTP 200 (OK), caso a requisição seja processada com sucesso
     //public void cadastrar(@RequestBody TopicoForm form){
+
+//    para montar uma resposta a ser devolvida ao cliente da API, devemos utilizar a classe ResponseEntity do Spring
     public ResponseEntity<TopicoDto> cadastrar(@RequestBody TopicoForm form, UriComponentsBuilder uriBuilder){
         Topico topico = form.converter(cursoRepository);
         topicoRepository.save(topico);
 
-        //quando o cadastro for realizado com sucesso deve retornar codigo HTTP 201
+        //boa prática: quando o cadastro for realizado com sucesso deve retornar codigo HTTP 201
         URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
         return ResponseEntity.created(uri).body(new TopicoDto(topico));
     }
