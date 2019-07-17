@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 public class TopicoForm {
 
+    // Bean Validation para validar as informações enviadas pelo cliente na API
     @NotNull @NotEmpty @Length(min = 5)
     private String titulo;
 
