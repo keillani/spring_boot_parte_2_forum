@@ -2,6 +2,7 @@ package br.com.alura.forum.controller;
 
 import br.com.alura.forum.controller.dto.DetalhesTopicoDto;
 import br.com.alura.forum.controller.dto.TopicoDto;
+import br.com.alura.forum.controller.form.AtualizacaoTopicoForm;
 import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.controller.repository.CursoRepository;
 import br.com.alura.forum.model.Topico;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -65,5 +67,13 @@ public class TopicosController {
 
         Topico topico=topicoRepository.getOne(id);
         return new DetalhesTopicoDto(topico);
+    }
+
+    @PutMapping("/{id}") //sobrescrever o recurso por inteiro diferente do path
+    @Transactional //avisar pro Spring que precisar atualizar em base e Efetuar o commit automático da transação, caso não ocorra uma exception
+    //não utilizar o mesmo form pois existe conteúdo que não deve ser atualizado
+    public ResponseEntity<TopicoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form){
+       Topico topico =form.atualizar(id, topicoRepository);
+       return ResponseEntity.ok(new TopicoDto(topico));
     }
 }
