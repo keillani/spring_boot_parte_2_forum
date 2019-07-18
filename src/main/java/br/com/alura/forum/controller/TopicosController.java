@@ -1,5 +1,6 @@
 package br.com.alura.forum.controller;
 
+import br.com.alura.forum.controller.dto.DetalhesTopicoDto;
 import br.com.alura.forum.controller.dto.TopicoDto;
 import br.com.alura.forum.controller.form.TopicoForm;
 import br.com.alura.forum.controller.repository.CursoRepository;
@@ -29,7 +30,7 @@ public class TopicosController {
     @Autowired
     private CursoRepository cursoRepository;
 
-//    @RequestMapping(value="/topicos", method= RequestMethod.GET)
+    //    @RequestMapping(value="/topicos", method= RequestMethod.GET)
     @GetMapping
     public List<TopicoDto> lista(String nomeCurso){
         if(nomeCurso == null){
@@ -47,15 +48,22 @@ public class TopicosController {
 //    O Spring devolverá o código HTTP 200 (OK), caso a requisição seja processada com sucesso
 //    public void cadastrar(@RequestBody TopicoForm form){
 
-//    para montar uma resposta a ser devolvida ao cliente da API, devemos utilizar a classe ResponseEntity do Spring
+    //    para montar uma resposta a ser devolvida ao cliente da API, devemos utilizar a classe ResponseEntity do Spring
 //    @Valid: Indicar ao Spring para executar as validações do Bean Validation no parâmetro do método
-@PostMapping
-public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder){
+    @PostMapping
+    public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder){
         Topico topico = form.converter(cursoRepository);
         topicoRepository.save(topico);
 
         //boa prática: quando o cadastro for realizado com sucesso deve retornar codigo HTTP 201
         URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
         return ResponseEntity.created(uri).body(new TopicoDto(topico));
+    }
+
+    @GetMapping("/{id}") //path com partes dinâmicas utilizar as chaves
+    public DetalhesTopicoDto detalhar(@PathVariable Long id){
+
+        Topico topico=topicoRepository.getOne(id);
+        return new DetalhesTopicoDto(topico);
     }
 }
