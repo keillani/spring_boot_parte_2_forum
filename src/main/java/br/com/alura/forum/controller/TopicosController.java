@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 //Dto data transfre object ou Vo value object
 //Para utilizar o JPA no projeto, devemos incluir o módulo Spring Boot Data JPA, que utiliza o Hibernate, por padrão, como sua implementação
@@ -63,26 +64,50 @@ public class TopicosController {
         return ResponseEntity.created(uri).body(new TopicoDto(topico));
     }
 
-    @GetMapping("/{id}") //path com partes dinâmicas utilizar as chaves
-    public DetalhesTopicoDto detalhar(@PathVariable Long id){
 
-        Topico topico=topicoRepository.getOne(id);
-        return new DetalhesTopicoDto(topico);
+    //erro:404
+    //utilizar o método findById (invés do método getOne)
+    //classe ResponseEntity para montar a resposta de not found
+    //getOne lança uma exception quando o id passado como parâmetro não existir no banco de dados
+    //O método findById retorna um objeto Optional<>, que pode ou não conter um objeto
+    @GetMapping("/{id}") //path com partes dinâmicas utilizar as chaves
+    public ResponseEntity<DetalhesTopicoDto> detalhar(@PathVariable Long id){ //@PathVariable: parâmetros dinâmicos no path da URL
+        Optional<Topico> topico=topicoRepository.findById(id);
+        if(topico.isPresent()){
+            return ResponseEntity.ok( new DetalhesTopicoDto( topico.get() ) );
+        }
+
+        //erro 404 para Evitar que a exception seja devolvida para o cliente no corpo da resposta
+        return ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}") //sobrescrever o recurso por inteiro diferente do path
     @Transactional //avisar pro Spring que precisar atualizar em base e Efetuar o commit automático da transação, caso não ocorra uma exception
     //não utilizar o mesmo form pois existe conteúdo que não deve ser atualizado
     public ResponseEntity<TopicoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form){
-       Topico topico =form.atualizar(id, topicoRepository);
-       return ResponseEntity.ok(new TopicoDto(topico));
+        Optional<Topico> optional=topicoRepository.findById(id);
+        if(optional.isPresent()){
+            Topico topico =form.atualizar(id, topicoRepository);
+            return ResponseEntity.ok(new TopicoDto(topico));
+        }
+
+        //erro 404 para Evitar que a exception seja devolvida para o cliente no corpo da resposta
+        return ResponseEntity.notFound().build();
     }
+
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> remover (@PathVariable Long id){
-        topicoRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+        Optional<Topico> optional=topicoRepository.findById(id);
+        if(optional.isPresent()){
+            topicoRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
+
+        //erro 404 para Evitar que a exception seja devolvida para o cliente no corpo da resposta
+        return ResponseEntity.notFound().build();
+    }
 
     }
-}
+
