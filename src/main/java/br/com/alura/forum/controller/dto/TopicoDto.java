@@ -4,6 +4,7 @@ package br.com.alura.forum.controller.dto;
 //Utilizando uma classe Dto existe a flexibilidade de escolher quais campos eu quero devolver
 
 import br.com.alura.forum.model.Topico;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,8 +27,8 @@ public class TopicoDto {
 
     //java 7 -pegar a lista de topicos, fazer um for para cada topico, dar new no TopicoDto, guardar em uma lista de TopicoDto e devolver essa lista de TopicoDto
     //java 8: segue abaixo:
-    public static List<TopicoDto> converter(List<Topico> topicos) {
-        return topicos.stream().map(TopicoDto::new).collect(Collectors.toList());
+    public static Page<TopicoDto> converter(Page<Topico> topicos) {
+        return topicos.map(TopicoDto::new);
     }
 
     public Long getId() {

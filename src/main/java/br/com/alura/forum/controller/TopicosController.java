@@ -8,6 +8,9 @@ import br.com.alura.forum.controller.repository.CursoRepository;
 import br.com.alura.forum.model.Topico;
 import br.com.alura.forum.repository.TopicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,14 +36,17 @@ public class TopicosController {
     @Autowired
     private CursoRepository cursoRepository;
 
-    //    @RequestMapping(value="/topicos", method= RequestMethod.GET)
+    //Ao utilizar o objeto Page, além de devolver os registros, o Spring também devolve informações sobre a paginação no JSON de
+    // resposta , como número total de registros e páginas.
     @GetMapping
-    public List<TopicoDto> lista(String nomeCurso){
+    public Page<TopicoDto> lista(@RequestParam(required = false) String nomeCurso,@RequestParam int pagina,@RequestParam int qtd){
+        Pageable paginacao = PageRequest.of(pagina, qtd);
+
         if(nomeCurso == null){
-            List<Topico> topicos = topicoRepository.findAll();
-            return TopicoDto.converter(topicos);
+            Page<Topico> topicos = topicoRepository.findAll(paginacao);
+            return  TopicoDto.converter(topicos);
         } else {
-            List<Topico> topicos = topicoRepository.findByCurso_Nome(nomeCurso); //"_" separa os relacionamentos
+            Page<Topico> topicos = topicoRepository.findByCurso_Nome(nomeCurso, paginacao); //"_" separa os relacionamentos
             return TopicoDto.converter(topicos);
         }
 
