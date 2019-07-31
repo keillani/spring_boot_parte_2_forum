@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface TopicoRepository extends JpaRepository<Topico, Long> {
 
+//    Nas classes Repository, os métodos que recebem um pageable como parâmetro retornam objetos do tipo Page<>, ao invés de List<>;
+
     Page<Topico> findByCurso_Nome(String nomeCurso, Pageable paginacao);
 
 //    Para criar manualmente a consulta com JPQL, devemos utilizar a anotação @Query;
